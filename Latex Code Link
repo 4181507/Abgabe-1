@@ -1,0 +1,123 @@
+\documentclass[a4paper,12pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath}
+\usepackage{hyperref}
+
+\title{Abgabe 1 für Computergestützte Methoden}
+\author{Gruppe (26), (Ioannis Alagiozidis, Mihriban Kalayci, Kai Mathias Kaese)}
+\date{\today}
+
+\begin{document}
+
+\maketitle
+
+% Manuelles Inhaltsverzeichnis
+\section*{Inhaltsverzeichnis}
+1 Der zentrale Grenzwertsatz \dotfill 2 \\
+1.1 Aussage \dotfill 2 \\
+1.2 Erklärung der Standardisierung \dotfill 2 \\
+1.3 Anwendungen \dotfill 2 \\
+2 Bearbeitung zur Aufgabe 1 \dotfill 3 \\
+
+\newpage
+
+\section{Der zentrale Grenzwertsatz}
+Der zentrale Grenzwertsatz (ZGS) ist ein fundamentales Resultat der Wahrscheinlichkeitstheorie, das die Verteilung von Summen unabhängiger, identisch verteilter (i.i.d.) Zufallsvariablen (ZV) beschreibt. Er besagt, dass unter bestimmten Voraussetzungen die Summe einer großen Anzahl solcher ZV annähernd normalverteilt ist, unabhängig von der Verteilung der einzelnen ZV. Dies ist besonders nützlich, da die Normalverteilung gut untersucht und mathematisch handhabbar ist.
+
+\subsection{Aussage}
+Sei $X_1, X_2, \dots, X_n$ eine Folge von i.i.d. ZV mit dem Erwartungswert $\mu = E(X_i)$ und der Varianz $\sigma^2 = \text{Var}(X_i)$, wobei $0 < \sigma^2 < \infty$ gelte. Dann konvergiert die standardisierte Summe $Z_n$ dieser ZV für $n \to \infty$ in Verteilung gegen eine Standardnormalverteilung:
+\begin{equation}
+Z_n = \frac{\sum_{i=1}^n X_i - n\mu}{\sigma \sqrt{n}} \xrightarrow{d} N(0, 1).
+\end{equation}
+Das bedeutet, dass für große $n$ die Summe der ZV näherungsweise normalverteilt ist mit Erwartungswert $n\mu$ und Varianz $n\sigma^2$:
+\begin{equation}
+\sum_{i=1}^n X_i \sim N(n\mu, n\sigma^2).
+\end{equation}
+
+\subsection{Erklärung der Standardisierung}
+Um die Summe der ZV in eine Standardnormalverteilung zu transformieren, subtrahiert man den Erwartungswert $n\mu$ und teilt durch die Standardabweichung $\sigma\sqrt{n}$. Dies führt zu der obigen Formel (1). Die Darstellung (2) ist für $n \to \infty$ nicht wohldefiniert.
+
+\subsection{Anwendungen}
+Der ZGS wird in vielen Bereichen der Statistik und der Wahrscheinlichkeitstheorie angewendet. Typische Beispiele sind:
+\begin{itemize}
+    \item Schätzen von Mittelwerten in großen Stichproben (z. B. in der Umfrageforschung).
+    \item Näherung von Binomialverteilungen durch Normalverteilungen bei großen Stichprobenumfängen.
+\end{itemize}
+
+\section{Bearbeitung zur Aufgabe 1}
+
+\subsection{Thema: Datenverarbeitung}
+\begin{enumerate}
+    \item \textbf{CSV-Datei importieren:} \\
+    Excel öffnen $\rightarrow$ auf \textit{Daten} gehen $\rightarrow$ \textit{Externe Daten abrufen} $\rightarrow$ \textit{Aus Text/CSV} und dann die Datei auswählen.
+    
+    \item \textbf{N/A-Werte und leere Werte entfernen:} \\
+    Über die Filteroption bei den Spalten die Werte “N/A” und “(Leer)” herausfiltern.
+    
+    \item \textbf{MAX-Befehl verwenden:} \\
+    Den Befehl unten an der Tabelle setzen: \texttt{=MAX(J2:J36440)}. Das Ergebnis lautet 83 Fahrenheit (\texttt{J} ist die Spalte \texttt{average\_temperature}).
+    
+    \item \textbf{Höchste mittlere Temperatur in Celsius berechnen:} \\
+    Umrechnungsformel verwenden: $(83 - 32) \times 5 / 9 = 28,33$ Grad Celsius.
+\end{enumerate}
+
+\subsection{Thema: Datenhaltung}
+\begin{enumerate}
+    \item \textbf{SQL installiert:} SQLite wurde installiert.
+    
+    \item \textbf{Datenbank-Schema (1. und 2. Normalform):} \\
+    Das Schema vermeidet Redundanzen und teilt die Daten in logische Einheiten:
+    \begin{itemize}
+        \item \textbf{1. Normalform:} Alle Attributwerte müssen atomar sein (z. B. keine Felder wie \texttt{Berlin, München}).
+        \item \textbf{2. Normalform:} Alle Nicht-Schlüsselattribute müssen vollständig vom gesamten Primärschlüssel abhängen.
+    \end{itemize}
+    
+    \item \textbf{SQL DDL für die Tabellen:} \\
+    \texttt{sqlite3 temperature\_data.db}
+    \begin{verbatim}
+-- Tabelle für Orte
+CREATE TABLE locations (
+    id INTEGER PRIMARY KEY,
+    location_name TEXT NOT NULL
+);
+
+-- Tabelle für Temperaturdaten
+CREATE TABLE temperature_data (
+    id INTEGER PRIMARY KEY,
+    date TEXT NOT NULL,
+    location_id INTEGER,
+    avg_temp REAL,
+    FOREIGN KEY (location_id) REFERENCES locations(id)
+);
+    \end{verbatim}
+
+    \item \textbf{Datensatz vorbereiten:}
+    \begin{itemize}
+        \item \textbf{Tabelle für Orte:} CSV-Datei in Excel filtern und irrelevante Spalten entfernen. Datei speichern als \texttt{locations.csv}.
+        \item \textbf{Tabelle für Temperaturdaten:} Analog vorgehen und als \texttt{temperature\_data.csv} speichern.
+    \end{itemize}
+    
+    \item \textbf{CSV-Dateien importieren:} \\
+    Dateien in dasselbe Verzeichnis wie \texttt{sqlite3.exe} legen. Befehle ausführen:
+    \begin{verbatim}
+.separator ","
+.import locations.csv locations
+.import temperature_data.csv temperature_data
+    \end{verbatim}
+
+    \item \textbf{SQL-Abfrage zur höchsten mittleren Temperatur:}
+    \begin{verbatim}
+SELECT MAX((avg_temp - 32) * 5.0 / 9.0) AS highest_avg_temp_celsius
+FROM temperature_data;
+    \end{verbatim}
+    Ergebnis: 28,33 Grad Celsius.
+\end{enumerate}
+
+\newpage
+
+\section{Literatur}
+\begin{itemize}
+    \item Achim Klenke. Wahrscheinlichkeitstheorie. Springer, 3. Edition, 2013.
+\end{itemize}
+
+\end{document}
